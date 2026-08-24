@@ -1,7 +1,9 @@
+
 import { useState, useEffect } from 'react'
 import './App.css'
-
+const API_BASE_URL = 'https://ai-tutor-6o9n.onrender.com'
 function App() {
+  
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
@@ -35,7 +37,7 @@ useEffect(() => {
 
     try {
       const response = await fetch(
-        'http://127.0.0.1:8000/api/auth/token/refresh/',
+        `${API_BASE_URL}/api/auth/token/refresh/`,
         {
           method: 'POST',
           headers: {
@@ -79,7 +81,7 @@ useEffect(() => {
 
     try {
       const response = await fetch(
-        'http://127.0.0.1:8000/api/auth/login/',
+        `${API_BASE_URL}/api/auth/login/`,
         {
           method: 'POST',
           headers: {
@@ -123,7 +125,7 @@ useEffect(() => {
     const token = localStorage.getItem('access_token')
 
     const response = await fetch(
-      'http://127.0.0.1:8000/api/courses/',
+      `${API_BASE_URL}/api/courses/`,
       {
         method: 'GET',
         headers: {
@@ -157,7 +159,7 @@ const handleLoadProgress = async () => {
     const token = localStorage.getItem('access_token')
 
     const response = await fetch(
-      'http://127.0.0.1:8000/api/courses/progress/',
+      `${API_BASE_URL}/api/courses/progress/`,
       {
         method: 'GET',
         headers: {
@@ -190,7 +192,7 @@ const handleViewLessons = async (course) => {
     const token = localStorage.getItem('access_token')
 
     const response = await fetch(
-      'http://127.0.0.1:8000/api/courses/lessons/',
+      `${API_BASE_URL}/api/courses/lessons/`,
       {
         method: 'GET',
         headers: {
@@ -239,7 +241,7 @@ const handleCompleteLesson = async (lessonId) => {
     const token = localStorage.getItem('access_token')
 
     const response = await fetch(
-      'http://127.0.0.1:8000/api/courses/progress/',
+      `${API_BASE_URL}/api/courses/progress/`,
       {
         method: 'POST',
         headers: {
@@ -288,7 +290,7 @@ const handleSendMessage = async (e) => {
     const token = localStorage.getItem('access_token')
 
     const response = await fetch(
-      'http://127.0.0.1:8000/api/chat/',
+      `${API_BASE_URL}/api/chat/`,
       {
         method: 'POST',
         headers: {
