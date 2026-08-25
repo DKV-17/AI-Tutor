@@ -22,6 +22,9 @@ const [chatInput, setChatInput] = useState('')
 const [chatLoading, setChatLoading] = useState(false)
 const [conversationId, setConversationId] = useState(null)
 const [chatError, setChatError] = useState('')
+const [progress, setProgress] = useState([])
+const [progressLoading, setProgressLoading] = useState(false)
+const [progressError, setProgressError] = useState('')
 
 
 
@@ -153,6 +156,43 @@ useEffect(() => {
   }
 }
 
+const handleViewProgress = async () => {
+    console.log("VIEW PROGRESS CLICKED")
+  setProgressLoading(true)
+  setProgressError('')
+
+  try {
+    const token = localStorage.getItem('access_token')
+
+    const response = await fetch(
+      `${API_BASE_URL}/api/courses/progress/`,
+      {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+
+    const data = await response.json()
+    console.log("PROGRESS RESPONSE:", response.status, data)
+
+    if (response.ok) {
+      setProgress(data)
+    } else {
+      setProgressError(
+        data.detail || 'Unable to load progress'
+      )
+    }
+  } catch (error) {
+    setProgressError(
+      'Unable to connect to the server.'
+    )
+  } finally {
+    setProgressLoading(false)
+  }
+}
 
 const handleLoadProgress = async () => {
   try {
@@ -497,10 +537,86 @@ const handleSendMessage = async (e) => {
               <p>
                 Track your completed lessons and learning progress.
               </p>
-              <button>
-                View Progress
-              </button>
+              <button onClick={handleViewProgress}>
+  View Progress
+</button>
             </div>
+
+
+            {progressLoading && (
+  <div className="progress-section">
+    <p>Loading progress...</p>
+  </div>
+)}
+
+{progressError && (
+  <div className="progress-section">
+    <p className="course-error">
+      {progressError}
+    </p>
+  </div>
+)}
+
+{!progressLoading && progress.length > 0 && (
+  <div className="progress-section">
+
+    <h2>My Learning Progress</h2>
+
+    <p>
+      Completed Lessons: {
+        progress.filter(
+          (item) => item.is_completed
+        ).length
+      }
+    </p>
+
+    <div className="progress-list">
+
+      {progress.map((item) => (
+        <div
+          className="progress-item"
+          key={item.id}
+        >
+
+          <h3>
+            Lesson {item.lesson}
+          </h3>
+
+          <p>
+            Status:{' '}
+            {item.is_completed
+              ? '✓ Completed'
+              : 'Not Completed'}
+          </p>
+
+          {item.completed_at && (
+            <p>
+              Completed on:{' '}
+              {new Date(
+                item.completed_at
+              ).toLocaleDateString()}
+            </p>
+          )}
+
+        </div>
+      ))}
+
+    </div>
+
+  </div>
+)}
+
+{!progressLoading && !progressError && progress.length === 0 && (
+  <div className="progress-section">
+
+    <h2>My Learning Progress</h2>
+
+    <p>
+      You have not completed any lessons yet.
+    </p>
+
+  </div>
+)}
 
             <div className="dashboard-card">
   <h3>🤖 AI Tutor</h3>
